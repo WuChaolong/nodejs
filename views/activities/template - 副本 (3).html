@@ -1,0 +1,48 @@
+<!DOCTYPE html>   
+<html>   
+<head>   
+<meta charset="utf-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=yes">
+<title>逛街吧-{{title}}</title>
+<link rel="stylesheet" type="text/css" href="../public/main.css"/>
+<script src="../public/main.js"></script>
+</head>
+<body>
+ 
+<header title="{{title}}">
+	{{#banner}}<img src="{{banner}}" alt="{{title}}">{{/banner}}
+</header>
+<div class="title">{{description}}</div>
+<div class="container">
+	{{#goodsData}}
+	<h3 style="{{titleStyle}}">{{#escape}}{{title}}{{/escape}}</h3>
+	<ul class="goodsList">
+		{{#goodss}}{{eachIndex}}
+		<li data-goodsid="{{id}}">
+			<a href="shiyimm://detail={'brand_name':'{{#brand_name}}{{escape}}{{/brand_name}}','id':{{id}}}"  data-trackevent="title_{{name}}_{{id}}">
+				<div class="g-img-div">
+					{{^index}}<img src="{{#img}}{{{bigImg}}}{{/img}}" alt="{{name}}">{{/index}}
+					{{#index}}<img src="{{{img}}}" alt="{{name}}">{{/index}}
+				</div>
+			</a>
+			<div class="g-t">
+				
+				{{name}}
+			</div>
+			<div class="g-c">
+				<span class="g-p"></span>
+			</div>
+		</li>
+		{{/goodss}}
+
+		{{resetIndex}}
+	</ul>
+
+	{{/goodsData}}
+</div>
+{{#moreApi}}
+<a href="shiyimm://list={'title':'{{#title}}{{unicode}}{{/title}}','show_type':2,'icon':'ic8','api_url':'{{{moreApi}}}','api_url_method':'GET'}" class="full-a"><div class="more" data-trackevent="{{title}}_更多">点击看更多 ></div></a>
+{{/moreApi}}
+</body>
+<!-- <script src="http://www.guangjieba.com/lib/js/analytics_baidu.js"></script> -->
+</html>

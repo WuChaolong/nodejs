@@ -1,0 +1,43 @@
+<!DOCTYPE html>   
+<html>   
+<head>   
+<meta charset="utf-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5, user-scalable=yes">
+<title>逛街吧-<%=title%></title>
+<link rel="stylesheet" type="text/css" href="../public/main.css"/>
+<script src="../public/main.js"></script>
+</head>
+<body>
+
+<% if(banner){ %>
+<header>
+	<img src="images/<%=banner%>" alt="<%=title%>">
+</header>
+<% } %>
+<div class="title"><%=bannerTitle%></div>
+<div class="container">
+	<% data.forEach(function(goodssGroup){ %>
+	<h3 style="<%=goodssGroup.titleStyle%>"><%-goodssGroup.title%></h3>
+	<ul class="goodsList">
+		<% goodssGroup.goodss.forEach(function(goods){%>
+		<li data-goodsid="<%=goods.id%>">
+			<a href="shiyimm://detail={'brand_name':'<%=:goods.brand_name|escape%>','id':<%=goods.id%>}">
+				<div class="g-img-div">
+					<img src="images/<%=goods.id%>.jpg" alt="<%=goods.name%>">
+				</div>
+			</a>
+			<div class="g-t">
+				<%=goods.name%>
+			</div>
+			<div class="g-c">
+				<span class="g-p"></span>
+			</div>
+		</li>
+		<% }) %>
+	</ul>
+	<% }) %>
+</div>
+<a href="shiyimm://list={'title':'<%-:title|unicode%>','show_type':2,'icon':'ic8','api_url':'<%-moreApi%>','api_url_method':'GET'}" class="full-a"><div class="more">点击看更多 ></div></a>
+</body>
+<!-- <script src="http://www.guangjieba.com/lib/js/analytics_baidu.js"></script> -->
+</html>
