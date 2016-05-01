@@ -6,7 +6,7 @@ var extend = require('node.extend')
   ,mustache = require('mustache')
   ,querystring = require('querystring')
 ;
-exports.api = api;
+exports.cross = cross;
 exports.activity = activity;
 
 var filters = {
@@ -179,10 +179,11 @@ function activity(response,request) {
   //   response.end();
   // });
 }
-function api(response,request) {
+
+function cross(response,request) {
 
 
-  console.log("Request handler 'api' was called.");
+  console.log("Request handler 'cross' was called.");
   var origin = (request.headers.origin || "*");
   var method = request.method.toUpperCase();
   switch (method){
@@ -200,7 +201,7 @@ function api(response,request) {
           "access-control-max-age": 10, // Seconds.
           "content-length": 0
         }
-      );
+      ); 
  
       // End the response - we're not sending back any content.
       response.end();
@@ -214,29 +215,40 @@ function api(response,request) {
       );
       request.on("end",
         function(){
-          response.writeHead(200, {"Content-Type": "application/json","access-control-allow-origin": origin});
-          
           var data = querystring.parse(requestBodyBuffer.join( "" ));
             console.log(data);
-          var api = data["api"];
-          if(data && api){
-            delete data["api"];
-            console.log(api);
-            requestMikeal.post(api,{form:data},function (error, res, body) {
-              try{
-                if(error){
-                  response.end(JSON.stringify(error));
-                }else if(response.statusCode == 200) {
-                  console.log(body);
-                  response.end(body);
-                }
-              }catch(err){
-                response.end(JSON.stringify(err));
-              }
-            });
-          }else{
-            response.end("api为空");
+          var crossContentType = data["crossContentType"]||"application/json";
+          var crossUrl = data["crossUrl"];
+          var crossMethod = data["crossMethod"]||"GET";
+
+          response.writeHead(200, {"Content-Type": crossContentType,"access-control-allow-origin": origin});
+          
+          if(!crossUrl){
+            response.end("crossUrl为空");
+            return;
           }
+          delete data["crossUrl"];
+          delete data["crossMethod"];
+          delete data["crossContentType"];
+
+          var options = {
+              url: crossUrl,
+              method:crossMethod,
+              form:data
+          };
+
+          requestMikeal(options,function (error, res, body) {
+            try{
+              if(error){
+                response.end(JSON.stringify(error));
+              }else if(response.statusCode == 200) {
+                console.log(body);
+                response.end(body);
+              }
+            }catch(err){
+              response.end(JSON.stringify(err));
+            }
+          });
         }
       );
       break;
