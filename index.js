@@ -1,8 +1,9 @@
 var server = require("./server");
 var router = require("./router");
-var requestHandlers = require("./requestHandlers");
-var restHandlers = require("./restHandlers");
-
+var requestHandlers = require("./handlers/requestHandlers");
+var restHandlers = require("./handlers/restHandlers");
+var resourcesSearch = require("./handlers/resourcesSearch");
+var hackerNews = require("./handlers/hackerNews");
 var handle = {};
 handle["/"] = requestHandlers.helloWorld;
 handle["/start"] = requestHandlers.start;
@@ -10,5 +11,7 @@ handle["/upload"] = requestHandlers.upload;
 handle["/show"] = requestHandlers.show;
 handle["/api"] = restHandlers.api;
 handle["/activity"] = restHandlers.activity;
+handle["/resourcesSearch"] = resourcesSearch.byGoogle;
+handle["/hackerNews"] = hackerNews.index;
 
 server.start(router.route, handle);
