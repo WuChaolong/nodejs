@@ -16,11 +16,15 @@ h1{display: none;}
 </style>
 </head>
 <body>
-{% for new in paragraphs %}
-<section>
-<h1> {{ new.value.title }}</h1>
-<iframe src="{{ new.value.location}}"></iframe>
-</section>
+{% for hackerNew in paragraphs %}
+   {% if not count %}
+     <section>
+        <h1> {{ hackerNew.value.title }}</h1>
+        <iframe src="{{ hackerNew.value.location}}"></iframe>
+     </section>
+     {% if loop.index == 9 %}
+       {% set count = loop.index %}
+     {% endif %}
+   {% endif %}
 {% endfor %}
-
 </body>
