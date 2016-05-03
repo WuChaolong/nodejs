@@ -5,6 +5,7 @@ var extend = require('node.extend')
   ,fs = require('fs')
   ,mustache = require('mustache')
   ,querystring = require('querystring')
+  ,iconv  = require('iconv-lite')
 ;
 exports.cross = cross;
 exports.activity = activity;
@@ -185,6 +186,7 @@ function cross(response,request) {
 
   console.log("Request handler 'cross' was called.");
   var origin = (request.headers.origin || "*");
+  response.setHeader("access-control-allow-origin",origin);
   var method = request.method.toUpperCase();
   switch (method){
     case 'OPTIONS':
@@ -221,9 +223,9 @@ function cross(response,request) {
           var crossUrl = data["crossUrl"];
           var crossMethod = data["crossMethod"]||"GET";
 
-          response.writeHead(200, {"Content-Type": crossContentType,"access-control-allow-origin": origin});
           
           if(!crossUrl){
+            response.writeHead(200, {"Content-Type": crossContentType,"access-control-allow-origin": origin});
             response.end("crossUrl为空");
             return;
           }
@@ -237,25 +239,14 @@ function cross(response,request) {
               form:data
           };
 
-          requestMikeal(options,function (error, res, body) {
-            try{
-              if(error){
-                response.end(JSON.stringify(error));
-              }else if(response.statusCode == 200) {
-                console.log(body);
-                response.end(body);
-              }
-            }catch(err){
-              response.end(JSON.stringify(err));
-            }
-          });
+          
+          requestApi(options,response);
         }
       );
       break;
     default:
       var query = url.parse(request.url,true).query;
       var api = query["api"];
-      response.writeHead(200, {"Content-Type": "application/json","access-control-allow-origin": origin});
       if(query && api){
           var parse = url.parse(api,true);
           delete query["api"];
@@ -263,19 +254,29 @@ function cross(response,request) {
           delete parse.search;
           var newApi = url.format(parse);
           console.log(newApi);
-          requestMikeal(newApi, function (error, res, body) {
-            try{
-              if(error){
-                response.end(JSON.stringify(error));
-              }else if(response.statusCode == 200) {
-                response.end(body);
-              }
-            }catch(err){
-              response.end(JSON.stringify(err));
-            }
-          })
+          requestApi(newApi,response);
       }else{
-        response.end("api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
+        sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
       }
   }
+}
+function requestApi(newApi,response){
+    requestMikeal(newApi, function (error, res, body) {
+      try{
+        if(error){
+          sendErr(response,error);
+        }else if(response.statusCode == 200) {
+          response.writeHead(200, {"Content-Type":res.headers["content-type"]});
+          response.end(body);
+        }
+      }catch(err){
+        sendErr(response,err);
+      }
+    })
+}
+
+
+function sendErr(response,err){
+        response.writeHead(200, {"Content-Type":"application/json;charset=UTF-8"});
+        response.end(JSON.stringify(err));
 }
