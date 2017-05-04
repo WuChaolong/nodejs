@@ -226,7 +226,7 @@ function cross(response,request) {
           
           if(!crossUrl){
             response.writeHead(200, {"Content-Type": crossContentType,"access-control-allow-origin": origin});
-            response.end("crossUrl为空");
+            response.end("crossUrl为空"+JSON.stringify(data));
             return;
           }
           delete data["crossUrl"];
