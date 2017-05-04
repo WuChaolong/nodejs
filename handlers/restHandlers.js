@@ -217,7 +217,7 @@ function cross(response,request) {
       );
       request.on("end",
         function(){
-          var data = querystring.parse(requestBodyBuffer.join( "" ));
+          var data = JSON.parse(requestBodyBuffer.join( "" ));
             console.log(data);
           var crossContentType = data["crossContentType"]||"application/json";
           var crossUrl = data["crossUrl"];
