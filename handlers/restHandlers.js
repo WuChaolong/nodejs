@@ -7,6 +7,9 @@ var extend = require('node.extend')
   ,querystring = require('querystring')
   ,iconv  = require('iconv-lite')
 ;
+
+  
+  var browser = require('browser-x');
 exports.cross = cross;
 exports.activity = activity;
 
@@ -244,6 +247,23 @@ function cross(response,request) {
         }
       );
       break;
+    case 'PUT':
+      var query = url.parse(request.url,true).query;
+      var api = query["api"];
+      if(query && api){
+          var parse = url.parse(api,true);
+          delete query["api"];
+          extend(parse.query,query);
+          delete parse.search;
+          var newApi = url.format(parse);
+          console.log(newApi);
+//           requestApi(newApi,response);
+          browserX(newApi,response);
+//           phantom(newApi,response)
+      }else{
+        sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
+      }
+      break;
     default:
       var query = url.parse(request.url,true).query;
       var api = query["api"];
@@ -255,6 +275,8 @@ function cross(response,request) {
           var newApi = url.format(parse);
           console.log(newApi);
           requestApi(newApi,response);
+//           browserX(newApi,response);
+//           phantom(newApi,response)
       }else{
         sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
       }
@@ -279,4 +301,44 @@ function requestApi(newApi,response){
 function sendErr(response,err){
         response.writeHead(200, {"Content-Type":"application/json;charset=UTF-8"});
         response.end(JSON.stringify(err));
+}
+
+function browserX(newApi,response){
+  var url = encodeURI(newApi);
+  browser({
+      url: url
+  }, function (errors, window) {
+      try{
+        if (errors) {
+          sendErr(response,err);
+          return;
+        }
+        var html = window.document.documentElement.innerHTML;
+        console.log(html);
+        response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
+        response.end(html);
+      }catch(err){
+        sendErr(response,err);
+      }
+  });
+}
+function phantom(newApi,response){
+  
+  const phantom = require('phantom');
+ 
+  (async function() {
+      const instance = await phantom.create();
+      const page = await instance.createPage();
+      await page.on("onResourceRequested", function(requestData) {
+          console.info('Requesting', requestData.url)
+      });
+
+      const status = await page.open(newApi);
+      console.log(status);
+
+      const content = await page.property('content');
+      console.log(content);
+
+      await instance.exit();
+  }());
 }
