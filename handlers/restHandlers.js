@@ -12,7 +12,7 @@ var extend = require('node.extend')
   var browser = require('browser-x');
 exports.cross = cross;
 exports.activity = activity;
-
+exports.fetch = fetch;
 var filters = {
   escape:function() {
       var result = escape(this);
@@ -301,6 +301,75 @@ function requestApi(newApi,response){
 function sendErr(response,err){
         response.writeHead(200, {"Content-Type":"application/json;charset=UTF-8"});
         response.end(JSON.stringify(err));
+}
+
+function fetch(response,request) {
+
+
+  console.log("Request handler 'cross' was called.");
+  var origin = (request.headers.origin || "*");
+  response.setHeader("access-control-allow-origin",origin);
+  var method = request.method.toUpperCase();
+  switch (method){
+    case 'OPTIONS':
+      // Echo back the Origin (calling domain) so that the
+      // client is granted access to make subsequent requests
+      // to the API.
+      response.writeHead(
+        "204",
+        "No Content",
+        {
+          "access-control-allow-origin": origin,
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-headers": "content-type, accept",
+          "access-control-max-age": 10, // Seconds.
+          "content-length": 0
+        }
+      ); 
+ 
+      // End the response - we're not sending back any content.
+      response.end();
+      break;
+    case 'POST':
+      var requestBodyBuffer = [];
+      request.on("data",
+        function( data ){
+          requestBodyBuffer.push(data);
+        }
+      );
+      request.on("end",
+        function(){
+          var data = JSON.parse(requestBodyBuffer.join( "" ));
+            console.log(data);
+          var crossContentType = data["crossContentType"]||"application/json";
+          var crossUrl = data["crossUrl"];
+          var crossMethod = data["crossMethod"]||"GET";
+
+          
+          if(!crossUrl){
+            response.writeHead(200, {"Content-Type": crossContentType,"access-control-allow-origin": origin});
+            response.end("crossUrl为空"+JSON.stringify(data));
+            return;
+          }
+          delete data["crossUrl"];
+          delete data["crossMethod"];
+          delete data["crossContentType"];
+
+          var options = {
+              url: crossUrl,
+              method:crossMethod,
+              form:data
+          };
+
+          
+          browserX(options.url,response);
+        }
+      );
+      break;
+    default:
+      sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
+
+  }
 }
 
 function browserX(newApi,response){
