@@ -11,7 +11,6 @@
     "firebase": "^1.0.11",
     "formidable": "^1.0.14",
     "mustache": "^0.8.1",
-    "node-browser": "^0.0.3",
     "node-fs": "^0.1.7",
     "node.extend": "^1.0.10",
     "phantom": "^4.0.5",
