@@ -13,6 +13,7 @@ var extend = require('node.extend')
 exports.cross = cross;
 exports.activity = activity;
 exports.fetch = fetch;
+exports.getRedirectsUrl = getRedirectsUrl;
 var filters = {
   escape:function() {
       var result = escape(this);
@@ -339,8 +340,13 @@ function fetch(response,request) {
       );
       request.on("end",
         function(){
-          var data = JSON.parse(requestBodyBuffer.join( "" ));
-            console.log(data);
+
+            var data = {};
+          try{
+            data=JSON.parse(requestBodyBuffer.join( "" ));
+          }catch(e){
+            console.log(requestBodyBuffer.join( "" ));
+          }
           var crossContentType = data["crossContentType"]||"application/json";
           var crossUrl = data["crossUrl"];
           var crossMethod = data["crossMethod"]||"GET";
@@ -361,35 +367,119 @@ function fetch(response,request) {
               form:data
           };
 
-          
+//           response.writeHead(100,{"Content-Type": "text/plain;charset=UTF-8"});
+
           browserX(options.url,response);
         }
       );
       break;
     default:
-      sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
-
+      var query = url.parse(request.url,true).query;
+      var api = query["api"];
+      if(query && api){
+          var parse = url.parse(api,true);
+          delete query["api"];
+          extend(parse.query,query);
+          delete parse.search;
+          var newApi = url.format(parse);
+          console.log(newApi);
+//           requestApi(newApi,response);
+          browserX(newApi,response);
+//           phantom(newApi,response)
+      }else{
+        sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
+      }
   }
 }
+function getRedirectsUrl(response,request) {
 
+
+  console.log("Request handler 'cross' was called.");
+  var origin = (request.headers.origin || "*");
+  response.setHeader("access-control-allow-origin",origin);
+  var method = request.method.toUpperCase();
+  switch (method){
+    case 'OPTIONS':
+      // Echo back the Origin (calling domain) so that the
+      // client is granted access to make subsequent requests
+      // to the API.
+      response.writeHead(
+        "204",
+        "No Content",
+        {
+          "access-control-allow-origin": origin,
+          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "access-control-allow-headers": "content-type, accept",
+          "access-control-max-age": 10, // Seconds.
+          "content-length": 0
+        }
+      ); 
+ 
+      // End the response - we're not sending back any content.
+      response.end();
+      break;
+    default:
+      var query = url.parse(request.url,true).query;
+      var api = query["api"];
+      if(query && api){
+          var parse = url.parse(api,true);
+          delete query["api"];
+          extend(parse.query,query);
+          delete parse.search;
+          var newApi = url.format(parse);
+          console.log(newApi);
+          requestApi(newApi,response);
+//           browserX(newApi,response);
+//           phantom(newApi,response)
+      
+          newApi = encodeURI(newApi);
+          try{
+            browser({
+                url: newApi
+            }, function (errors, window) {
+                try{
+                  if (errors) {
+                    sendErr(response,err);
+                    return;
+                  }
+                  var url = window.location.href;
+                  console.log(url);
+                  response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
+                  response.end(url);
+                }catch(err){
+                  sendErr(response,err);
+                }
+            });
+          }catch(err){
+            sendErr(response,err);
+          }
+      }else{
+        sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
+      }
+  }
+}
 function browserX(newApi,response){
   var url = encodeURI(newApi);
-  browser({
-      url: url
-  }, function (errors, window) {
-      try{
-        if (errors) {
+  try{
+    browser({
+        url: url
+    }, function (errors, window) {
+        try{
+          if (errors) {
+            sendErr(response,err);
+            return;
+          }
+          var html = window.document.documentElement.innerHTML;
+          console.log(html);
+          response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
+          response.end(html);
+        }catch(err){
           sendErr(response,err);
-          return;
         }
-        var html = window.document.documentElement.innerHTML;
-        console.log(html);
-        response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
-        response.end(html);
-      }catch(err){
-        sendErr(response,err);
-      }
-  });
+    });
+  }catch(err){
+    sendErr(response,err);
+  }
 }
 // function phantom(newApi,response){
   
@@ -411,3 +501,4 @@ function browserX(newApi,response){
 //       await instance.exit();
 //   }());
 // }
+

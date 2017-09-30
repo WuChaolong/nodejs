@@ -16,4 +16,5 @@ handle["/activity"] = restHandlers.activity;
 handle["/resourcesSearch"] = resourcesSearch.byGoogle;
 handle["/hackerNews"] = hackerNews.index;
 handle["/fetch"] = restHandlers.fetch;
+handle["/getRedirectsUrl"] = restHandlers.getRedirectsUrl;
 server.start(router.route, handle);
