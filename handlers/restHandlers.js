@@ -6,9 +6,10 @@ var extend = require('node.extend')
   ,mustache = require('mustache')
   ,querystring = require('querystring')
   ,iconv  = require('iconv-lite')
+  ,nodeFetcher = require('node-fetch')
 ;
 
-  
+
   var browser = require('browser-x');
 exports.cross = cross;
 exports.activity = activity;
@@ -275,7 +276,7 @@ function cross(response,request) {
           delete parse.search;
           var newApi = url.format(parse);
           console.log(newApi);
-          requestApi(newApi,response);
+          requestApi({url: newApi,encoding: null},response);
 //           browserX(newApi,response);
 //           phantom(newApi,response)
       }else{
@@ -289,7 +290,17 @@ function requestApi(newApi,response){
         if(error){
           sendErr(response,error);
         }else if(response.statusCode == 200) {
-          response.writeHead(200, {"Content-Type":res.headers["content-type"]});
+//           console.log(body);
+          if(res.headers["content-type"]=="text/html; charset=GBK"){
+            body = iconv.decode(body, 'GBK');
+          }
+
+          console.log(body);
+                            response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
+
+//           response.headers=;
+//           response.writeHead(200, res.headers);
+
           response.end(body);
         }
       }catch(err){
@@ -376,15 +387,21 @@ function fetch(response,request) {
     default:
       var query = url.parse(request.url,true).query;
       var api = query["api"];
+      var npm = query["npm"];
       if(query && api){
           var parse = url.parse(api,true);
           delete query["api"];
           extend(parse.query,query);
           delete parse.search;
-          var newApi = url.format(parse);
+          var newApi = api;
+          
           console.log(newApi);
+          if(npm=="node-fetch"){
+            nodeFetch(newApi,response);
+          }else{
+            browserX(newApi,response);
+          }
 //           requestApi(newApi,response);
-          browserX(newApi,response);
 //           phantom(newApi,response)
       }else{
         sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
@@ -428,28 +445,12 @@ function getRedirectsUrl(response,request) {
           delete parse.search;
           var newApi = url.format(parse);
           console.log(newApi);
-          requestApi(newApi,response);
+//           requestApi(newApi,response);
 //           browserX(newApi,response);
-//           phantom(newApi,response)
+          phantom(newApi,response)
       
           newApi = encodeURI(newApi);
           try{
-            browser({
-                url: newApi
-            }, function (errors, window) {
-                try{
-                  if (errors) {
-                    sendErr(response,err);
-                    return;
-                  }
-                  var url = window.location.href;
-                  console.log(url);
-                  response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
-                  response.end(url);
-                }catch(err){
-                  sendErr(response,err);
-                }
-            });
           }catch(err){
             sendErr(response,err);
           }
@@ -471,7 +472,9 @@ function browserX(newApi,response){
           }
           var html = window.document.documentElement.innerHTML;
           console.log(html);
-          response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
+          
+//             html = iconv.decode(html, 'gbk');
+          response.writeHead(200,{"Content-Type": "text/plain"});
           response.end(html);
         }catch(err){
           sendErr(response,err);
@@ -481,24 +484,37 @@ function browserX(newApi,response){
     sendErr(response,err);
   }
 }
-// function phantom(newApi,response){
-  
-//   const phantom = require('phantom');
- 
-//   (async function() {
-//       const instance = await phantom.create();
-//       const page = await instance.createPage();
-//       await page.on("onResourceRequested", function(requestData) {
-//           console.info('Requesting', requestData.url)
-//       });
+function phantom(newApi,response){
+  const Browser = require('zombie');
+  const browser = new Browser();
 
-//       const status = await page.open(newApi);
-//       console.log(status);
+  browser.fetch(newApi)
+  .then(function(response) {
+    console.log('Status code:', response.status);
+    if (response.status === 200)
+      return response.text();
+  })
+  .then(function(text) {
+    console.log('Document:', text);
+  })
+  .catch(function(error) {
+    console.log('Network error');
+  });
+}
+function nodeFetch(newApi,response){
 
-//       const content = await page.property('content');
-//       console.log(content);
-
-//       await instance.exit();
-//   }());
-// }
+  newApi = encodeURI(newApi);
+	
+          
+          console.log(newApi);
+  nodeFetcher(newApi)
+	.then(res => res.text())
+	.then(function(body) {
+	      response.writeHead(200,{"Content-Type": "text/plain"});
+          response.end(body);
+    })
+	.catch(function(err) {
+          sendErr(response,err);
+    });
+}
 
