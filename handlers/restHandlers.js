@@ -479,6 +479,7 @@ function browserX(newApi,response){
         }catch(err){
           sendErr(response,err);
         }
+        window = html = null;
     });
   }catch(err){
     sendErr(response,err);
@@ -512,6 +513,8 @@ function nodeFetch(newApi,response){
 	.then(function(body) {
 	      response.writeHead(200,{"Content-Type": "text/plain"});
           response.end(body);
+          
+        body = null;
     })
 	.catch(function(err) {
           sendErr(response,err);
