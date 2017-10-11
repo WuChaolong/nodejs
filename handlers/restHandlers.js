@@ -352,7 +352,7 @@ function fetch(response,request) {
       request.on("end",
         function(){
 
-            var data = {};
+          var data = {};
           try{
             data=JSON.parse(requestBodyBuffer.join( "" ));
           }catch(e){
