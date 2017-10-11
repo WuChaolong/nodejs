@@ -293,13 +293,11 @@ function requestApi(newApi,response){
 //           console.log(body);
           if(res.headers["content-type"]=="text/html; charset=GBK"){
             body = iconv.decode(body, 'GBK');
+            response.writeHead(200,{"Content-Type": "text/html;charset=UTF-8"});
+          
+          }else{
+            response.writeHead(200,{"Content-Type": res.headers["content-type"]});
           }
-
-          console.log(body);
-                            response.writeHead(200,{"Content-Type": "text/plain;charset=UTF-8"});
-
-//           response.headers=;
-//           response.writeHead(200, res.headers);
 
           response.end(body);
         }
