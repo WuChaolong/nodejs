@@ -244,9 +244,10 @@ function cross(response,request) {
           var options = {
               url: crossUrl,
               method:crossMethod,
-              form:data
+              body:JSON.stringify(data),
+              'content-type': 'application/json'
           };
-
+          console.log(JSON.stringify(options));
           
           requestApi(options,response);
         }
