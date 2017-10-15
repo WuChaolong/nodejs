@@ -222,8 +222,11 @@ function cross(response,request) {
       );
       request.on("end",
         function(){
-          var data = JSON.parse(requestBodyBuffer.join( "" ));
-            console.log(data);
+          try{
+            var data=JSON.parse(requestBodyBuffer.join( "" ));
+          }catch(e){
+            var data = requestBodyBuffer.join( "" );
+          }            
           var crossContentType = data["crossContentType"]||"application/json";
           var crossUrl = data["crossUrl"];
           var crossMethod = data["crossMethod"]||"GET";
