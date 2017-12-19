@@ -1,0 +1,616 @@
+html,body{
+    min-height: 100%;
+    /* margin: 0; */
+}
+.baidu-video {
+    width: 100%;
+    height: 610px;
+    overflow: hidden;
+    /*     border-left: 1px inset; */
+    position: relative;
+}
+.baidu-video iframe{
+    width: 100%;
+    height: 800px;
+    /*     margin-top: -200px; */
+    margin-left: -2px;
+}
+.loading{
+    border: 0;
+    background-image: url(https://m.popkey.co/163fce/Llgbv_s-200x150.gif);
+    background-repeat: no-repeat;
+    background-size: 5em auto;
+    background-position: center;
+}
+iframe.loading[src]{
+    background: none;
+}
+body{
+    /* max-width: 751px; */
+    margin:auto;
+    /* padding: 8px; */
+    position: relative;
+    padding-bottom: 5em;
+    box-sizing: border-box;
+    z-index: -2;
+}
+.search-form{
+    /* padding-top: 2em; */
+    /* padding-bottom: 2em; */
+    /* height: 50%; */
+    /* padding-top: 5em; */
+    box-sizing: border-box;
+    text-align: center;
+    margin: 0;
+    position: relative;
+}
+.search-form input{font-size: 1.5em;padding: 0 5px;}
+
+.search-form input{
+    width: 100%;
+    height: 15%;
+    transition: font-size .2s, height .2s;
+    /* text-align: center; */
+    min-height: 2em;
+}
+.search-form button{
+    position: absolute;
+    /* left: 0; */
+    right: .5em;
+    bottom: -.75em;
+    margin: auto;
+    font-size: 1.5em;
+    /* float: left; */
+    width: 5em;
+    line-height:1.5em;
+    z-index: 1;
+}
+.confirm{
+    text-align:center;
+    padding: 12em 0;
+    max-width: 751px;
+    margin: auto;
+}
+.confirm span{
+    display: block;
+    /* line-height: 420px; */
+}
+.confirm i{
+    /* display: block; */
+    font-size: 1.2em;
+}
+#progressGroup li.confirm-none{
+    /* color:yellow; */
+    position: absolute;
+    transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    display:none;
+    /* top: -100%; */
+    bottom: 100%;
+    text-align: center;
+}
+#progressGroup li.none ~ li.none ~ li.confirm-none{
+  display:block;
+}
+#progressGroup li.none + li.none + li.more{
+  display:block;
+}
+#progressGroup li + li.none +li.none + li.more{
+  display:none;
+}
+
+.confirm-none>span{
+  font-size:1.5em;
+
+}
+/* .more i{
+    font-style: normal;
+}
+.a-more{
+
+    text-decoration: none;
+}
+.a-more:hover{
+    
+    text-decoration: none;
+}
+.more{ opacity: .8; }
+.more:hover{
+    opacity: 1;
+} */
+
+.title{
+    margin-top:2em;
+    margin-bottom:1em;
+    font-weight: normal;
+    display: inline-block;
+    word-break:break-all;
+}
+a{
+    opacity: .8;
+    color: inherit;
+    text-decoration: none;
+}
+a[href]:hover{
+    color: -webkit-link;
+    text-decoration: underline;
+    opacity: 1;
+}
+.hover{
+  text-decoration: underline;
+  /* color: initial; */
+  color: -webkit-link; */
+}
+.is-same{
+    color: -webkit-link;
+    text-decoration: underline;
+    opacity: 1;
+}
+footer{
+    /* display: inline; */
+    position: absolute;
+    bottom: 0;
+    line-height: 2em;
+    /* left: 0; */
+    /* padding: 0 .5em; */
+    width: 100%;
+    margin: auto;
+    /* right: 0; */
+    text-align: center;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    /* border: 0; */
+    /* border-top: 1px; */
+    /* border-top-style: dashed; */
+    /* border-top-color: darkgray; */
+    opacity: .99;
+}
+footer>*{
+    margin-right:1em;
+}
+footer >p{
+  /* margin: auto; */
+  /* opacity: .2; */
+  /* line-height: 2em; */
+  /* font-size: .5em; */
+  /* position: absolute; */
+  /* bottom: 0; */
+  /* left: 0; */
+  /* right: 0; */
+  /* z-index: -1; */
+  display: none;
+}
+/* .tel:hover:after{
+  content:"13006248103";
+} */
+.hide{
+    display:none;
+}
+.icon-douban:before,.icon-loading:before,.icon-pan:before{
+    content:" ";
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto 100%;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align:middle;
+}
+.icon-loading{
+    display:block;
+}
+.icon-loading:before{
+    background-image: url("https://m.popkey.co/163fce/Llgbv_s-200x150.gif");
+    
+    width: 2em;
+    height: 2em;
+}
+.icon-douban:before{
+    background-image: url("https://img3.doubanio.com/favicon.ico");
+    /* vertical-align: text-top; */
+}
+.icon-pan:before{
+    background-image: url("https://yun.baidu.com/res/static/images/favicon.ico");
+}
+iframe[sandbox="allow-same-origin allow-popups allow-forms allow-pointer-lock"]{
+    opacity:.1;
+}
+#data{
+    padding:0 .5em;
+    max-width: 751px;
+    margin: auto;
+}
+code{
+    word-break: break-all;
+    padding:0 .5em;
+    box-sizing:border-box;
+}
+
+
+@media screen and (min-width:751px){
+    input{
+        text-align: center;
+    }
+    button{
+/*         left: 0; */
+/*         right: 0; */
+    }
+    #progressGroup {
+        text-align: center;
+    }
+    .baidu-video {
+        height: 420px;
+    }
+    .baidu-video iframe{
+        margin-top: -190px;
+    }
+    
+    footer>p{
+      display:inline-block;
+      margin: 0;
+    }
+    #disqus_thread{
+      max-width:751px;
+      margin:auto;
+    }
+}
+
+progress{
+    -webkit-appearance: none;
+    height: .8em;
+    width: 5em;
+    vertical-align: inherit;
+}
+progress::-webkit-progress-bar {
+    background-color: inherit;
+    background-color: #eee;
+}
+progress::-webkit-progress-value{
+  
+    background-color: darkgray;
+}
+.success progress::-webkit-progress-value{
+    background-color: green;
+}
+.error progress::-webkit-progress-value{
+    background-color: red;
+}
+.none progress::-webkit-progress-value{
+    background-color: yellow;
+}
+#progressGroup .num{
+  display:none;
+  font-size: 1.2em;
+  cursor: pointer;
+  vertical-align: middle;
+  padding: .5em;
+  transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+}
+
+#progressGroup .success .num{
+  display:inline-block;
+}
+
+
+#progressGroup{
+    /* display:none; */
+    text-align: left;
+    margin: 5em 0;
+    margin-bottom: 10em;
+    transform: rotate(90deg);
+    -ms-transform: rotate(90deg);  /* IE 9 */
+    -moz-transform: rotate(90deg);  /* Firefox */
+    -webkit-transform: rotate(90deg); /* Safari 和 Chrome */
+    -o-transform: rotate(90deg);  /* Opera */
+    position: relative;
+    z-index: 10;
+}
+#progressGroup li{
+    text-align: left;
+    list-style: none;
+    /* line-height: .8em; */
+}
+#progressGroup li i:before{
+   content: '';
+   display: inline-block;
+   height: .8em;
+   width: .8em;
+   /* background-image: url(); */
+   margin-right: .5em;
+   background-size: 100%;
+   transform: rotate(-90deg);
+   -ms-transform: rotate(-90deg);
+   -moz-transform: rotate(-90deg);
+   -webkit-transform: rotate(-90deg);
+   -o-transform: rotate(-90deg);
+}
+#progressGroup li.more{
+  text-align:center;
+  line-height: 2em;
+  padding-top: .5em;
+  /* box-shadow: 0 0 1px; */
+  display:none;
+}
+.more .num:after{
+    content:"﹀";
+    font-size: 1.2em;
+    /* vertical-align: middle; */
+    /* text-shadow: 0 0 1px; */
+    /* margin-top: -.5em; */
+}
+#progressGroup.show{
+    display: inline-block;
+}
+.more em{
+  display: block;
+  /* min-width: 1em; */
+  text-align: center;
+  margin-bottom: -.5em;
+}
+#progressGroupDiv{
+    text-align:center;
+    /* min-height: 10em; */
+    overflow: auto;
+}
+i.diaosisou:before{
+   background-image: url('http://www.diaosisou.org/static/image/favicon.ico');
+}
+i.tieba:before{
+   background-image: url('https://tb1.bdstatic.com/tb/favicon.ico');
+}
+i.panduoduo:before{
+   background-image: url('http://139.196.166.21:8085/favicon.ico');
+}
+i.panc:before{
+   background-image: url('https://api.goproxy.cc/static/css/pancss/img/favicon.ico');
+}
+i.thepiratebay:before{
+   background-image: url('https://thepiratebay.org/favicon.ico');
+}
+.doubanList{
+    height: 11em;
+    overflow-x: scroll;
+    white-space: nowrap;
+    padding: .5em;
+    display:none;
+    /* margin-bottom: 5em; */
+    text-align: center;
+    box-sizing: border-box;
+    background-color: white;
+
+
+}
+.doubanList .loading{
+    display:inline-block;
+    min-width:110px;
+    height: 100%;
+}
+.doubanList img{
+    height: 7.5em;
+    /*     margin-right:.2em; */
+    /* position:absolute; */
+    /* z-index:-1; */
+    /* margin:auto; */
+    /* left:0; */
+    /* right:0; */
+    /* vertical-align: top; */
+    /* float: left; */
+    /* display: block; */
+}
+.doubanList a{
+    position:relative;
+    text-align:center;
+    display:inline-block;
+    height:100%;
+    margin-right:.5em;
+    min-width:110px;
+    overflow: hidden;
+    opacity: 1;
+}
+.doubanList a[href]{
+    /* text-decoration: underline; */
+    color: blue;
+    color: -webkit-link;
+}
+.doubanList span{
+    /* white-space: nowrap; */
+    /* width: 5em; */
+    /* text-align: center; */
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+    line-height: 1.5em;
+    /* float: left; */
+    display: block;
+}
+.douban-more i{
+  display:block;
+
+}
+iframe+.reloadSingle {
+  height: 2em;
+  padding: .25em  0 0 .25em;
+  width: 2em;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  color: transparent;
+  display:none;
+  /* background: transparent; */
+  cursor:pointer;
+}
+iframe[src]+.reloadSingle{
+  display: inline-block;
+}
+.reloadSingle:hover{
+  background-color: #ddd;
+}
+.reloadSingle:before, .reloadSingle:after {
+  content: '';
+  display: block;
+}
+.reloadSingle:before {
+  border-color: transparent #999 #999 #999;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: .125em;
+  height: 1.5em;
+  width: 1.5em;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.reloadSingle:after {
+  border-color: transparent transparent transparent  #999;
+  border-style: solid;
+  border-width: .3125em 0 .3125em .5em;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+}
+
+
+.tabs {
+  position: relative;  
+/*   // set height to be even for all tab groups */
+  min-height: 200px;
+}
+
+.tab {
+  /* float: left; */
+  display: inline-block;
+  /* position: relative; */
+}
+
+.tab label {
+/*   // set label height */top: 1em;display: inline-block;padding: 0 .5em;cursor: pointer;box-shadow: 0 0 1px;background: white;/* font-size: 1.2em; */}
+
+/* // Visually hide radio buttons */
+.tab [type=checkbox] {
+  position: absolute;
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  
+  &:focus + label {
+    outline: 2px dotted black;
+  }
+}
+
+.content {
+  position: absolute;
+  /* top: 2em; */
+  left: 0;
+  right: 0;
+  bottom: 3em;
+  opacity: 0;
+  display:none;
+  width: 100%;
+  z-index: -1;
+}
+#messageDiv .content{
+  width: 15em;
+  bottom: 100%;
+  /* z-index: 0; */
+  /* box-shadow: 0 0 0; */
+  right: 0;
+  left: auto;
+  margin: auto;
+}
+.icon-face:before{
+  content:"☹";
+}
+#tab-message.success ~ label:before{
+  content:" ✓";
+  color:green;
+}
+#tab-message.error ~ label:before{
+  content:" ✗";
+  color:red;
+}
+[type=checkbox]:checked ~ label {
+  z-index: 2;
+  box-shadow: 0 1px 1px;
+  background-color: white;
+}
+
+[type=checkbox]:checked ~ label ~ .content {
+/*   z-index: 1; */
+  opacity: 1;
+  display:block;
+  background-color: white;
+  z-index: -1;
+  box-shadow: 0 0 1px;
+}
+
+[type=checkbox]:checked ~ label ~ .doubanList{
+
+}
+
+#progressGroup .reloadSingle{
+    display: none;
+    position: relative;
+    vertical-align: middle;
+    height: 2em;
+    padding: .25em .25em 0;
+}
+#progressGroup .error .reloadSingle{
+    display: inline-block;
+}
+#progressGroup .reloadSingle:before{
+  border-color: transparent red red red;
+}
+#progressGroup .reloadSingle:after{
+  border-color: transparent transparent transparent red;
+} 
+.reloadSingle{
+  cursor: pointer;
+  /* box-shadow: 0 0 1px; */
+}
+.button{
+
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #ddd;
+}
+#disqus_thread{
+  margin-top:2em;
+  padding:.5em;
+}
+iframe{
+
+    width: 100%;
+}
+#messageDiv{
+  position:relative;
+  z-index: 10;
+}
+#messageForm{
+  width: 100%;
+  height: 100%;
+  position: relative;
+  margin: 0;
+}
+#messageForm textarea{
+  width: 100%;
+  min-height: 6em;
+  border: 0;
+  padding-top: 1em;
+}
+#messageForm [type="submit"]{
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 1.2em;
+}
+#messageForm [type="submit"].loading{
+}

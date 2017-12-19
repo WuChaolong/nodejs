@@ -4,7 +4,7 @@ var requestHandlers = require("./handlers/requestHandlers");
 var restHandlers = require("./handlers/restHandlers");
 var resourcesSearch = require("./handlers/resourcesSearch");
 var hackerNews = require("./handlers/hackerNews");
-
+var freelancer = require("./handlers/freelancer");
 var handle = {};
 handle["/"] = requestHandlers.helloWorld;
 handle["/start"] = requestHandlers.start;
@@ -17,4 +17,6 @@ handle["/resourcesSearch"] = resourcesSearch.byGoogle;
 handle["/hackerNews"] = hackerNews.index;
 handle["/fetch"] = restHandlers.fetch;
 handle["/getRedirectsUrl"] = restHandlers.getRedirectsUrl;
+handle["/htmlToAmp"] = freelancer.htmlToAmp;
+
 server.start(router.route, handle);

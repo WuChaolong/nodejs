@@ -235,21 +235,22 @@ function cross(response,request) {
           if(!crossUrl){
             response.writeHead(200, {"Content-Type": crossContentType,"access-control-allow-origin": origin});
             response.end("crossUrl为空"+JSON.stringify(data));
-            return;
-          }
-          delete data["crossUrl"];
-          delete data["crossMethod"];
-          delete data["crossContentType"];
+            
+          }else{
+            delete data["crossUrl"];
+            delete data["crossMethod"];
+            delete data["crossContentType"];
 
-          var options = {
-              url: crossUrl,
-              method:crossMethod,
-              body:JSON.stringify(data),
-              'content-type': 'application/json'
-          };
-          console.log(JSON.stringify(options));
-          
-          requestApi(options,response);
+            var options = {
+                url: crossUrl,
+                method:crossMethod,
+                body:JSON.stringify(data),
+                'content-type': 'application/json'
+            };
+            console.log(JSON.stringify(options));
+
+            requestApi(options,response);
+          }
         }
       );
       break;
@@ -368,21 +369,22 @@ function fetch(response,request) {
           if(!crossUrl){
             response.writeHead(200, {"Content-Type": crossContentType,"access-control-allow-origin": origin});
             response.end("crossUrl为空"+JSON.stringify(data));
-            return;
+            
+          }else{
+            delete data["crossUrl"];
+            delete data["crossMethod"];
+            delete data["crossContentType"];
+
+            var options = {
+                url: crossUrl,
+                method:crossMethod,
+                form:data
+            };
+
+  //           response.writeHead(100,{"Content-Type": "text/plain;charset=UTF-8"});
+
+            browserX(options.url,response);
           }
-          delete data["crossUrl"];
-          delete data["crossMethod"];
-          delete data["crossContentType"];
-
-          var options = {
-              url: crossUrl,
-              method:crossMethod,
-              form:data
-          };
-
-//           response.writeHead(100,{"Content-Type": "text/plain;charset=UTF-8"});
-
-          browserX(options.url,response);
         }
       );
       break;
@@ -470,14 +472,16 @@ function browserX(newApi,response){
         try{
           if (errors) {
             sendErr(response,err);
-            return;
+          }else{
+            var html = window.document.documentElement.innerHTML;
+//           console.log(html);
+            var amp = ampify(html, {cwd: 'amp'});
+  console.log(amp);
+  //             html = iconv.decode(html, 'gbk');
+            response.writeHead(200,{"Content-Type": "text/plain"});
+            response.end(amp);
           }
-          var html = window.document.documentElement.innerHTML;
-          console.log(html);
           
-//             html = iconv.decode(html, 'gbk');
-          response.writeHead(200,{"Content-Type": "text/plain"});
-          response.end(html);
         }catch(err){
           sendErr(response,err);
         }

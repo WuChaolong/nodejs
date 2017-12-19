@@ -1,14 +1,9 @@
-// import fetch from 'node-fetch';
-// or
-const fetch = require('node-fetch');
+const {Client} = require('pg')
 
-// if you are using your own Promise library, set it through fetch.Promise. Eg.
+const client = new Client()
 
-// import Bluebird from 'bluebird';
-// fetch.Promise = Bluebird;
+await client.connect()
 
-// plain text or html
-
-fetch('http://www.diaosisou.org/list/%E7%BE%9E%E7%BE%9E%E7%9A%84%E9%93%81%E6%8B%B3/1')
-	.then(res => res.text())
-	.then(body => console.log(body));
+const res = await client.query('SELECT $1::text as message', ['Hello world!'])
+console.log(res.rows[0].message) // Hello world!
+await client.end()
