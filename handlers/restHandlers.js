@@ -7,14 +7,18 @@ var extend = require('node.extend')
   ,querystring = require('querystring')
   ,iconv  = require('iconv-lite')
   ,nodeFetcher = require('node-fetch')
+  ,ampify = require('ampify')
 ;
 
+var httpProxy = require('http-proxy');
 
+const zlib = require('zlib');
+var Client = require('node-rest-client').Client;
   var browser = require('browser-x');
 exports.cross = cross;
 exports.activity = activity;
 exports.fetch = fetch;
-exports.getRedirectsUrl = getRedirectsUrl;
+// exports.getRedirectsUrl = getRedirectsUrl;
 var filters = {
   escape:function() {
       var result = escape(this);
@@ -281,7 +285,28 @@ function cross(response,request) {
           delete parse.search;
           var newApi = url.format(parse);
           console.log(newApi);
-          requestApi({url: newApi,encoding: null},response);
+
+//           var proxy = httpProxy.createProxyServer({}); // See (†)
+//           proxy.web(request, response, { target: newApi });
+
+//           var client = new Client();
+//           // registering remote methods
+//           client.registerMethod("jsonMethod", newApi, "GET");
+
+//           client.methods.jsonMethod(function (data, res) {
+//               // parsed response body as js object
+//               console.log(data);
+//               // raw response
+//               console.log(res);
+//               var headers = {
+//                   "Content-Type": res.headers["content-type"]
+//                   ,"content-encoding":res.headers['content-encoding']
+//               };
+// //               response.writeHead(200,headers);
+// //               response.end(JSON.stringify(data));
+              
+//           });
+          requestApi({url: newApi,encoding: null,gzip: true},response);
 //           browserX(newApi,response);
 //           phantom(newApi,response)
       }else{
@@ -296,26 +321,75 @@ function requestApi(newApi,response){
           sendErr(response,error);
         }else if(response.statusCode == 200) {
 //           console.log(body);
-          if(res.headers["content-type"]=="text/html; charset=GBK"){
-            body = iconv.decode(body, 'GBK');
-            response.writeHead(200,{"Content-Type": "text/html;charset=UTF-8"});
-          
-          }else{
-            response.writeHead(200,{"Content-Type": res.headers["content-type"]});
-          }
+//           var headers = {
+//               "Content-Type": res.headers["content-type"]
+//               ,"content-encoding":res.headers['content-encoding']
+//           };
+//           if(res.headers["content-type"]=="text/html; charset=GBK"){
+//             body = iconv.decode(body, 'GBK');
+//             headers["Content-Type"] = "text/html;charset=UTF-8";
+//           }
+//           response.writeHead(200,headers);
+//           zlib.gzip(body, function (_, result) {  // The callback will give you the 
+//             response.end(result);                     // result, so just send it.
 
-          response.end(body);
+//             res = body = response = null;
+//           });
+          endGzip(body,response,res);
+          
+//           if(res.headers['content-encoding']=="gzip"){
+//               zlib.gzip(body, function (_, result) {  // The callback will give you the 
+//                 response.end(result);                     // result, so just send it.
+                
+//                 res = body = response = null;
+//               });
+//           }else{
+
+//             response.end(body);
+//             res = body = response = null;
+//           }
+
+              
         }
       }catch(err){
         sendErr(response,err);
       }
     })
 }
+function endGzip(data,response,res){
+  if(!isBuffer(data)){
+    data = new Buffer(data, 'utf-8');
+  } 
 
+  var headers = {
+      "Content-Type": "text/html"
+      ,"content-encoding":"gzip"
+  };
+  if(res){
+    console.log(res.headers);
+    headers["Content-Type"] = res.headers["content-type"];
+    if(res.headers["content-type"]=="text/html; charset=GBK"){
+      data = iconv.decode(data, 'GBK');
+      headers["Content-Type"] = "text/html;charset=UTF-8";
+    }
+  }
+  response.writeHead(200,headers);
+  zlib.gzip(data, function (_, result) {  // The callback will give you the 
+    response.end(result);                     // result, so just send it.
+
+    res = data = response = null;
+  });
+  function isBuffer(arg) {
+    return arg instanceof Buffer;
+  }
+}
 
 function sendErr(response,err){
+  
+        console.log(err);
         response.writeHead(200, {"Content-Type":"application/json;charset=UTF-8"});
         response.end(JSON.stringify(err));
+        response = err = null;
 }
 
 function fetch(response,request) {
@@ -412,85 +486,37 @@ function fetch(response,request) {
       }
   }
 }
-function getRedirectsUrl(response,request) {
 
-
-  console.log("Request handler 'cross' was called.");
-  var origin = (request.headers.origin || "*");
-  response.setHeader("access-control-allow-origin",origin);
-  var method = request.method.toUpperCase();
-  switch (method){
-    case 'OPTIONS':
-      // Echo back the Origin (calling domain) so that the
-      // client is granted access to make subsequent requests
-      // to the API.
-      response.writeHead(
-        "204",
-        "No Content",
-        {
-          "access-control-allow-origin": origin,
-          "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "access-control-allow-headers": "content-type, accept",
-          "access-control-max-age": 10, // Seconds.
-          "content-length": 0
-        }
-      ); 
- 
-      // End the response - we're not sending back any content.
-      response.end();
-      break;
-    default:
-      var query = url.parse(request.url,true).query;
-      var api = query["api"];
-      if(query && api){
-          var parse = url.parse(api,true);
-          delete query["api"];
-          extend(parse.query,query);
-          delete parse.search;
-          var newApi = url.format(parse);
-          console.log(newApi);
-//           requestApi(newApi,response);
-//           browserX(newApi,response);
-          phantom(newApi,response)
-      
-          newApi = encodeURI(newApi);
-          try{
-          }catch(err){
-            sendErr(response,err);
-          }
-      }else{
-        sendErr(response,"api为空,例：“api?api=http://192.168.1.123:3000/v1/merchants/shop/search?city_id=88&mall_id=150”");
-      }
-  }
-}
 function browserX(newApi,response){
-  var url = encodeURI(newApi);
   try{
+    var url = encodeURI(newApi);
     browser({
         url: url
     }, function (errors, window) {
-        try{
+
           if (errors) {
-            sendErr(response,err);
+            console.log(errors);
+            sendErr(response,errors);
           }else{
             var html = window.document.documentElement.innerHTML;
-//           console.log(html);
-            var amp = ampify(html, {cwd: 'amp'});
-  console.log(amp);
-  //             html = iconv.decode(html, 'gbk');
-            response.writeHead(200,{"Content-Type": "text/plain"});
-            response.end(amp);
+          console.log(html);
+//             var html = ampify(html, {cwd: 'amp'});
+//             console.log(1+html);
+// //               html = iconv.decode(html, 'gbk');
+//             response.writeHead(200,{"Content-Type": "text/plain"});
+//             response.end(html);
+
+            endGzip(html,response);
           }
           
-        }catch(err){
-          sendErr(response,err);
-        }
         window = html = null;
     });
+
   }catch(err){
     sendErr(response,err);
   }
 }
+
 function phantom(newApi,response){
   const Browser = require('zombie');
   const browser = new Browser();
@@ -517,13 +543,54 @@ function nodeFetch(newApi,response){
   nodeFetcher(newApi)
 	.then(res => res.text())
 	.then(function(body) {
-	      response.writeHead(200,{"Content-Type": "text/plain"});
-          response.end(body);
+// 	      response.writeHead(200,{"Content-Type": "text/plain"});
+//           response.end(body);
           
-        body = null;
+            endGzip(body,response);
+//         response = body = null;
     })
 	.catch(function(err) {
           sendErr(response,err);
     });
 }
 
+
+
+function memorySizeOf(obj) {
+    var bytes = 0;
+
+    function sizeOf(obj) {
+        if(obj !== null && obj !== undefined) {
+            switch(typeof obj) {
+            case 'number':
+                bytes += 8;
+                break;
+            case 'string':
+                bytes += obj.length * 2;
+                break;
+            case 'boolean':
+                bytes += 4;
+                break;
+            case 'object':
+                var objClass = Object.prototype.toString.call(obj).slice(8, -1);
+                if(objClass === 'Object' || objClass === 'Array') {
+                    for(var key in obj) {
+                        if(!obj.hasOwnProperty(key)) continue;
+                        sizeOf(obj[key]);
+                    }
+                } else bytes += obj.toString().length * 2;
+                break;
+            }
+        }
+        return bytes;
+    };
+
+    function formatByteSize(bytes) {
+        if(bytes < 1024) return bytes + " bytes";
+        else if(bytes < 1048576) return(bytes / 1024).toFixed(3) + " KiB";
+        else if(bytes < 1073741824) return(bytes / 1048576).toFixed(3) + " MiB";
+        else return(bytes / 1073741824).toFixed(3) + " GiB";
+    };
+
+    return formatByteSize(sizeOf(obj));
+};
