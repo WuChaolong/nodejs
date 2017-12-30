@@ -366,7 +366,7 @@ function endGzip(data,response,res){
       ,"content-encoding":"gzip"
   };
   if(res){
-    console.log(res.headers);
+//     console.log(res.headers);
     headers["Content-Type"] = res.headers["content-type"];
     if(res.headers["content-type"]=="text/html; charset=GBK"){
       data = iconv.decode(data, 'GBK');
@@ -434,6 +434,7 @@ function fetch(response,request) {
             data=JSON.parse(requestBodyBuffer.join( "" ));
           }catch(e){
             console.log(requestBodyBuffer.join( "" ));
+            
           }
           var crossContentType = data["crossContentType"]||"application/json";
           var crossUrl = data["crossUrl"];
@@ -499,7 +500,7 @@ function browserX(newApi,response){
             sendErr(response,errors);
           }else{
             var html = window.document.documentElement.innerHTML;
-          console.log(html);
+//           console.log(html);
 //             var html = ampify(html, {cwd: 'amp'});
 //             console.log(1+html);
 // //               html = iconv.decode(html, 'gbk');
