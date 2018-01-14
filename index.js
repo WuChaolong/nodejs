@@ -19,3 +19,5 @@ handle["/fetch"] = restHandlers.fetch;
 // handle["/htmlToAmp"] = freelancer.htmlToAmp;
 
 server.start(router.route, handle);
+
+var nl = require('newrelic');
