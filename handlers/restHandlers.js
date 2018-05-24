@@ -75,6 +75,7 @@ function fetch(response,request) {
 
 function requestApi(newApi,response){
     requestMikeal(newApi, function (error, res, body) {
+//       console.log(body);
       try{
         if(error){
           sendErr(response,error);
@@ -98,10 +99,10 @@ function endGzip(data,response,res){
   if(res){
 //     console.log(res.headers);
     headers["Content-Type"] = res.headers["content-type"];
-    if(res.headers["content-type"]=="text/html; charset=GBK"){
-      data = iconv.decode(data, 'GBK');
-      headers["Content-Type"] = "text/html;charset=UTF-8";
-    }
+//     if(res.headers["content-type"]=="text/html; charset=GBK"){
+//       data = iconv.decode(data, 'GBK');
+//       headers["Content-Type"] = "text/html;charset=UTF-8";
+//     }
   }
   response.writeHead(200,headers);
   zlib.gzip(data, function (_, result) {  // The callback will give you the 
@@ -270,11 +271,12 @@ function handler(response,request,request2,post) {
       if(query && api){
           var parse = url.parse(api,true);
           delete query["api"];
+          delete query["npm"];
           extend(parse.query,query);
           delete parse.search;
           var newApi = url.format(parse);
           console.log(newApi);
-          request2(api,response,query);
+          request2(newApi,response,query);
 
 //           browserX(newApi,response);
 //           phantom(newApi,response)
