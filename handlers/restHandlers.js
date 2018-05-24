@@ -274,7 +274,7 @@ function handler(response,request,request2,post) {
           delete parse.search;
           var newApi = url.format(parse);
           console.log(newApi);
-          request2(newApi,response,query);
+          request2(api,response,query);
 
 //           browserX(newApi,response);
 //           phantom(newApi,response)
